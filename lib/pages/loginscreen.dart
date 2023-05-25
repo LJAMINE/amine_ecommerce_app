@@ -231,6 +231,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   imagepath: 'assets/images/google.png',
                                   onTap: () {},
                                 ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Squaretile(
+                                  // onTap: () => provider.signInwithGoogle(),
+                                  imagepath: 'assets/images/facebook.png',
+                                  onTap: () {},
+                                ),
                               ],
                             )
                           ],

@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_1/pages/loginscreen.dart';
 import 'package:flutter_ecommerce_1/widgets/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import '../component/page_title_bar.dart';
 import '../component/upside.dart';
 import '../widgets/google.dart';
@@ -18,7 +20,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordcontroller = TextEditingController();
   final _emailcontroller = TextEditingController();
   final _confirmpasswordcontroller = TextEditingController();
+  final _phonecontroller = TextEditingController();
   bool isPasswrodVisible = false;
+  String dialcode = "";
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +108,86 @@ class _RegisterPageState extends State<RegisterPage> {
                                         border: InputBorder.none,
                                         hintText: 'Email'),
                                   ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 25),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.white),
+                                ),
+
+                                // phone number
+
+                                child: Stack(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: InternationalPhoneNumberInput(
+                                        locale: "US",
+
+                                        keyboardAction: TextInputAction.done,
+                                        onInputChanged: (PhoneNumber number) {
+                                          dialcode = number.dialCode!;
+                                        },
+                                        onInputValidated: (bool value) {},
+                                        selectorConfig: const SelectorConfig(
+                                          selectorType: PhoneInputSelectorType
+                                              .BOTTOM_SHEET,
+                                        ),
+                                        ignoreBlank: false,
+                                        autoValidateMode:
+                                            AutovalidateMode.disabled,
+                                        selectorTextStyle: const TextStyle(
+                                            color: Colors.black),
+
+                                        //controller
+                                        textFieldController: _phonecontroller,
+
+                                        formatInput: false,
+                                        maxLength: 9,
+                                        // keyboardType:
+                                        //     const TextInputType.numberWithOptions(
+                                        //   signed: true,
+                                        //   decimal: true,
+                                        // ),
+                                        cursorColor: Colors.black,
+                                        inputDecoration: InputDecoration(
+                                          contentPadding: const EdgeInsets.only(
+                                              bottom: 15, left: 0),
+                                          border: InputBorder.none,
+                                          hintText: 'Phone Number',
+                                          hintStyle: TextStyle(
+                                              color: Colors.grey[700],
+                                              fontSize: 16),
+                                        ),
+                                        onSaved: (PhoneNumber number) {
+                                          log(number.toString());
+                                        },
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: 90,
+                                      top: 8,
+                                      bottom: 8,
+                                      child: Container(
+                                        height: 40,
+                                        width: 1,
+                                        color: Colors.black.withOpacity(0.13),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
