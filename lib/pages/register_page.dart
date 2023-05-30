@@ -1,13 +1,15 @@
-import 'dart:developer';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_ecommerce_1/pages/loginscreen.dart';
+import 'package:flutter_ecommerce_1/component/config.dart';
+import 'package:flutter_ecommerce_1/pages/login_page.dart';
 import 'package:flutter_ecommerce_1/widgets/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+// import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import '../component/page_title_bar.dart';
 import '../component/upside.dart';
 import '../widgets/google.dart';
+import 'package:http/http.dart' as https;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -17,12 +19,52 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _passwordcontroller = TextEditingController();
-  final _emailcontroller = TextEditingController();
-  final _confirmpasswordcontroller = TextEditingController();
-  final _phonecontroller = TextEditingController();
+  // final _passwordcontroller = TextEditingController();
+  // final _emailcontroller = TextEditingController();
+  // final _confirmpasswordcontroller = TextEditingController();
+  // final _phonecontroller = TextEditingController();
   bool isPasswrodVisible = false;
   String dialcode = "";
+  final TextEditingController _fullnamecontroller = TextEditingController();
+  final TextEditingController _emailcontroller = TextEditingController();
+  final TextEditingController _passwordcontroller = TextEditingController();
+  bool _isNotValidate = false;
+
+  void registerUser() async {
+    if (_emailcontroller.text.isNotEmpty &&
+        _passwordcontroller.text.isNotEmpty &&
+        _fullnamecontroller.text.isNotEmpty) {
+      var requestBody = {
+        "email": _emailcontroller.text,
+        "password": _passwordcontroller.text,
+        "name": _fullnamecontroller.text
+      };
+      var jsonBody = jsonEncode(requestBody);
+      print(jsonBody);
+
+      var response = await https.post(
+        Uri.parse("${url}users/signup"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonBody,
+      );
+      print(response.body);
+
+      var jsonResponse = jsonDecode(response.body);
+      print(jsonResponse['status']);
+
+      if (jsonResponse = true) {
+        // ignore: use_build_context_synchronously
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SignInPage()));
+      } else {
+        print("SomeThing Went Wrong");
+      }
+    } else {
+      setState(() {
+        _isNotValidate = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +123,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 15),
                                   child: TextField(
-                                    controller: _emailcontroller,
-                                    decoration: const InputDecoration(
+                                    controller: _fullnamecontroller,
+                                    decoration: InputDecoration(
+                                        errorText: _isNotValidate
+                                            ? 'enter proper info'
+                                            : null,
                                         border: InputBorder.none,
                                         hintText: 'Full name'),
                                   ),
@@ -104,7 +149,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                   padding: const EdgeInsets.only(left: 15),
                                   child: TextField(
                                     controller: _emailcontroller,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
+                                        errorText: _isNotValidate
+                                            ? 'enter proper info'
+                                            : null,
                                         border: InputBorder.none,
                                         hintText: 'Email'),
                                   ),
@@ -114,83 +162,83 @@ class _RegisterPageState extends State<RegisterPage> {
                             const SizedBox(
                               height: 15,
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.white),
-                                ),
+                            // Padding(
+                            //   padding:
+                            //       const EdgeInsets.symmetric(horizontal: 25),
+                            //   child: Container(
+                            //     padding: const EdgeInsets.symmetric(
+                            //       horizontal: 0,
+                            //     ),
+                            //     decoration: BoxDecoration(
+                            //       color: Colors.grey[200],
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       border: Border.all(color: Colors.white),
+                            //     ),
 
-                                // phone number
+                            //     // phone number
 
-                                child: Stack(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: InternationalPhoneNumberInput(
-                                        locale: "US",
+                            //     child: Stack(
+                            //       children: [
+                            //         Padding(
+                            //           padding: const EdgeInsets.symmetric(
+                            //               horizontal: 20),
+                            //           child: InternationalPhoneNumberInput(
+                            //             locale: "US",
 
-                                        keyboardAction: TextInputAction.done,
-                                        onInputChanged: (PhoneNumber number) {
-                                          dialcode = number.dialCode!;
-                                        },
-                                        onInputValidated: (bool value) {},
-                                        selectorConfig: const SelectorConfig(
-                                          selectorType: PhoneInputSelectorType
-                                              .BOTTOM_SHEET,
-                                        ),
-                                        ignoreBlank: false,
-                                        autoValidateMode:
-                                            AutovalidateMode.disabled,
-                                        selectorTextStyle: const TextStyle(
-                                            color: Colors.black),
+                            //             keyboardAction: TextInputAction.done,
+                            //             onInputChanged: (PhoneNumber number) {
+                            //               dialcode = number.dialCode!;
+                            //             },
+                            //             onInputValidated: (bool value) {},
+                            //             selectorConfig: const SelectorConfig(
+                            //               selectorType: PhoneInputSelectorType
+                            //                   .BOTTOM_SHEET,
+                            //             ),
+                            //             ignoreBlank: false,
+                            //             autoValidateMode:
+                            //                 AutovalidateMode.disabled,
+                            //             selectorTextStyle: const TextStyle(
+                            //                 color: Colors.black),
 
-                                        //controller
-                                        textFieldController: _phonecontroller,
+                            //             //controller
+                            //             textFieldController: _phonecontroller,
 
-                                        formatInput: false,
-                                        maxLength: 9,
-                                        // keyboardType:
-                                        //     const TextInputType.numberWithOptions(
-                                        //   signed: true,
-                                        //   decimal: true,
-                                        // ),
-                                        cursorColor: Colors.black,
-                                        inputDecoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              bottom: 15, left: 0),
-                                          border: InputBorder.none,
-                                          hintText: 'Phone Number',
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey[700],
-                                              fontSize: 16),
-                                        ),
-                                        onSaved: (PhoneNumber number) {
-                                          log(number.toString());
-                                        },
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 90,
-                                      top: 8,
-                                      bottom: 8,
-                                      child: Container(
-                                        height: 40,
-                                        width: 1,
-                                        color: Colors.black.withOpacity(0.13),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+                            //             formatInput: false,
+                            //             maxLength: 9,
+                            //             // keyboardType:
+                            //             //     const TextInputType.numberWithOptions(
+                            //             //   signed: true,
+                            //             //   decimal: true,
+                            //             // ),
+                            //             cursorColor: Colors.black,
+                            //             inputDecoration: InputDecoration(
+                            //               contentPadding: const EdgeInsets.only(
+                            //                   bottom: 15, left: 0),
+                            //               border: InputBorder.none,
+                            //               hintText: 'Phone Number',
+                            //               hintStyle: TextStyle(
+                            //                   color: Colors.grey[700],
+                            //                   fontSize: 16),
+                            //             ),
+                            //             onSaved: (PhoneNumber number) {
+                            //               log(number.toString());
+                            //             },
+                            //           ),
+                            //         ),
+                            //         Positioned(
+                            //           left: 90,
+                            //           top: 8,
+                            //           bottom: 8,
+                            //           child: Container(
+                            //             height: 40,
+                            //             width: 1,
+                            //             color: Colors.black.withOpacity(0.13),
+                            //           ),
+                            //         )
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                             const SizedBox(
                               height: 15,
                             ),
@@ -209,6 +257,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                     keyboardType: TextInputType.visiblePassword,
                                     obscureText: isPasswrodVisible,
                                     decoration: InputDecoration(
+                                      errorText: _isNotValidate
+                                          ? 'enter proper info'
+                                          : null,
                                       border: InputBorder.none,
                                       hintText: 'Password',
                                       suffixIcon: IconButton(
@@ -233,50 +284,50 @@ class _RegisterPageState extends State<RegisterPage> {
                             const SizedBox(
                               height: 10,
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    border: Border.all(color: Colors.white),
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 20),
-                                  child: TextFormField(
-                                    // add controller
-                                    controller: _confirmpasswordcontroller,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    obscureText: isPasswrodVisible,
-                                    validator: (value) {
-                                      if (value == _passwordcontroller.text) {
-                                        return null;
-                                      } else {
-                                        return "password is not correct";
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: ' Confirm Password',
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isPasswrodVisible =
-                                                !isPasswrodVisible;
-                                          });
-                                        },
-                                        icon: FaIcon(
-                                          isPasswrodVisible
-                                              ? FontAwesomeIcons.eye
-                                              : FontAwesomeIcons.eyeSlash,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // Padding(
+                            //   padding:
+                            //       const EdgeInsets.symmetric(horizontal: 25),
+                            //   child: Container(
+                            //     decoration: BoxDecoration(
+                            //         color: Colors.grey[200],
+                            //         border: Border.all(color: Colors.white),
+                            //         borderRadius: BorderRadius.circular(12)),
+                            //     child: Padding(
+                            //       padding: const EdgeInsets.only(left: 20),
+                            //       child: TextFormField(
+                            //         // add controller
+                            //         controller: _confirmpasswordcontroller,
+                            //         keyboardType: TextInputType.visiblePassword,
+                            //         obscureText: isPasswrodVisible,
+                            //         validator: (value) {
+                            //           if (value == _passwordcontroller.text) {
+                            //             return null;
+                            //           } else {
+                            //             return "password is not correct";
+                            //           }
+                            //         },
+                            //         decoration: InputDecoration(
+                            //           border: InputBorder.none,
+                            //           hintText: ' Confirm Password',
+                            //           suffixIcon: IconButton(
+                            //             onPressed: () {
+                            //               setState(() {
+                            //                 isPasswrodVisible =
+                            //                     !isPasswrodVisible;
+                            //               });
+                            //             },
+                            //             icon: FaIcon(
+                            //               isPasswrodVisible
+                            //                   ? FontAwesomeIcons.eye
+                            //                   : FontAwesomeIcons.eyeSlash,
+                            //               size: 20,
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
 
                             const SizedBox(
                               height: 10,
@@ -313,7 +364,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25),
                               child: GestureDetector(
-                                // onTap: signIn,
+                                onTap: () => {registerUser()},
                                 child: Container(
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
@@ -348,7 +399,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              const LoginScreen(),
+                                              const SignInPage(),
                                         ));
                                   },
                                   child: const Text(

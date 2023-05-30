@@ -44,7 +44,7 @@ dependencies:
   flutter_phone_direct_caller: ^2.1.1
   hidden_drawer_menu: ^3.0.1
   rxdart:
-  shared_preferences: 
+  shared_preferences: ^2.1.1 
   flare_flutter:
   google_maps_flutter: ^2.2.5
   google_places_flutter: ^2.0.5
@@ -52,6 +52,7 @@ dependencies:
   http: ^0.13.6
   font_awesome_flutter: ^10.4.0
   intl_phone_number_input: ^0.7.3+1
+  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,23 +1,85 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_1/pages/dashboard.dart';
 import 'package:flutter_ecommerce_1/pages/register_page.dart';
 import 'package:flutter_ecommerce_1/widgets/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:http/http.dart' as https;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../component/config.dart';
 import '../component/page_title_bar.dart';
 import '../component/upside.dart';
 import '../widgets/google.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _passwordcontroller = TextEditingController();
-  final _emailcontroller = TextEditingController();
+class _SignInPageState extends State<SignInPage> {
+  final TextEditingController _emailcontroller = TextEditingController();
+  final TextEditingController _passwordcontroller = TextEditingController();
+  late SharedPreferences prefs;
+  final bool _isNotValidate = false;
   bool isPasswrodVisible = false;
+  @override
+  void initState() {
+    super.initState();
+    initSharedpref();
+  }
+
+  void initSharedpref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  void signInuser() async {
+    if (_emailcontroller.text.isNotEmpty &&
+        _passwordcontroller.text.isNotEmpty) {
+      var requestBody = {
+        "email": _emailcontroller.text,
+        "password": _passwordcontroller.text,
+      };
+
+      var jsonBody = jsonEncode(requestBody);
+      print(jsonBody);
+
+      var response = await https.post(
+        Uri.parse("${url}users/signin"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonBody,
+      );
+      var jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse == true) {
+        var myToken = jsonResponse['token'];
+        prefs.setString('token', myToken);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Dashboard(
+                      token: myToken,
+                    )));
+      } else {
+        print("something wrong");
+      }
+//       if (jsonResponse['token'] != null) {
+//   var myToken = jsonResponse['token'];
+//   prefs.setString('token', myToken);
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => Dashboard(
+//         token: myToken,
+//       ),
+//     ),
+//   );
+// } else {
+//   print("Something went wrong");
+// }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   padding: const EdgeInsets.only(left: 15),
                                   child: TextField(
                                     controller: _emailcontroller,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
+                                        errorText: _isNotValidate
+                                            ? 'enter proper info'
+                                            : null,
                                         border: InputBorder.none,
                                         hintText: 'Email'),
                                   ),
@@ -102,6 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     keyboardType: TextInputType.visiblePassword,
                                     obscureText: isPasswrodVisible,
                                     decoration: InputDecoration(
+                                      errorText: _isNotValidate
+                                          ? 'enter proper info'
+                                          : null,
                                       border: InputBorder.none,
                                       hintText: 'Password',
                                       suffixIcon: IconButton(
@@ -159,7 +227,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25),
                               child: GestureDetector(
-                                // onTap: signIn,
+                                onTap: () {
+                                  signInuser();
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
