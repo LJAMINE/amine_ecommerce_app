@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ecommerce_1/widgets/constants.dart';
+import 'package:flutter_ecommerce_1/helpers/constants.dart';
 
 class Upside extends StatelessWidget {
   const Upside({super.key, required this.imgUrl});

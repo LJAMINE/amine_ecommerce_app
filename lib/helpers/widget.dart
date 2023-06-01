@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 Widget textInput(
     {required TextEditingController controller,
     String? hintText,
+    bool isNotValidate = false,
     String? Function(String?)? validator}) {
   return Container(
     decoration: BoxDecoration(
@@ -24,6 +25,7 @@ Widget textInput(
         //   return null;
         // },
         decoration: InputDecoration(
+          errorText: isNotValidate ? 'enter proper info' : null,
           border: InputBorder.none,
           hintText: hintText,
         ),

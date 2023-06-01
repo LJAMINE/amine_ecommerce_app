@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ecommerce_1/widgets/constants.dart';
+import 'package:flutter_ecommerce_1/helpers/constants.dart';
 
 class TextFieldContainer extends StatelessWidget {
   const TextFieldContainer(this.child, {super.key});

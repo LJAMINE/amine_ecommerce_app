@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/constants.dart';
+import 'constants.dart';
 
 class PageTitleBar extends StatelessWidget {
   const PageTitleBar({Key? key, required this.title}) : super(key: key);

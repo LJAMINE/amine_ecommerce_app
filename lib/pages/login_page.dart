@@ -1,15 +1,16 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_1/models/profile.dart';
 import 'package:flutter_ecommerce_1/pages/dashboard.dart';
 import 'package:flutter_ecommerce_1/pages/register_page.dart';
-import 'package:flutter_ecommerce_1/widgets/constants.dart';
+import 'package:flutter_ecommerce_1/helpers/constants.dart';
+import 'package:flutter_ecommerce_1/providers/profile_provider.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as https;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../component/config.dart';
-import '../component/page_title_bar.dart';
-import '../component/upside.dart';
-import '../widgets/google.dart';
+import '../helpers/page_title_bar.dart';
+import '../helpers/upside.dart';
+import '../helpers/google.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -21,9 +22,13 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   late SharedPreferences prefs;
-  final bool _isNotValidate = false;
+  // ignore: prefer_final_fields
+  bool _isNotValidate = false;
   bool isPasswrodVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,62 +39,36 @@ class _SignInPageState extends State<SignInPage> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  void signInuser() async {
-    if (_emailcontroller.text.isNotEmpty &&
-        _passwordcontroller.text.isNotEmpty) {
-      var requestBody = {
-        "email": _emailcontroller.text,
-        "password": _passwordcontroller.text,
-      };
+  signinMethode(
+    ProfileProvider profileProvider,
+  ) async {
+    if (formKey.currentState!.validate()) {
+      Profile? profile = await profileProvider.signInUser(
+          email: _emailcontroller.text, password: _passwordcontroller.text);
 
-      var jsonBody = jsonEncode(requestBody);
-      print(jsonBody);
-
-      var response = await https.post(
-        Uri.parse("${url}users/signin"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonBody,
-      );
-      var jsonResponse = jsonDecode(response.body);
-
-      if (jsonResponse == true) {
-        var myToken = jsonResponse['token'];
-        prefs.setString('token', myToken);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Dashboard(
-                      token: myToken,
-                    )));
+      if (profile != null && mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Dashboard(),
+          ),
+          (route) => false,
+        );
       } else {
-        print("something wrong");
+        SmartDialog.showToast("Something is wrong",
+            alignment: Alignment.center);
       }
-//       if (jsonResponse['token'] != null) {
-//   var myToken = jsonResponse['token'];
-//   prefs.setString('token', myToken);
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => Dashboard(
-//         token: myToken,
-//       ),
-//     ),
-//   );
-// } else {
-//   print("Something went wrong");
-// }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        body: SizedBox(
-          width: size.width,
-          height: size.height,
-          child: SingleChildScrollView(
+        body: Consumer<ProfileProvider>(
+            builder: (context, profileProvider, child) {
+          return SingleChildScrollView(
             child: Stack(
               children: [
                 const Upside(imgUrl: "assets/images/login.png"),
@@ -107,220 +86,225 @@ class _SignInPageState extends State<SignInPage> {
                         topRight: Radius.circular(50),
                       ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 15,
-                        ),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 15,
+                          ),
 
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        // const Text(
-                        //   "or use your email account",
-                        //   style: TextStyle(
-                        //       color: Colors.grey,
-                        //       fontFamily: 'OpenSans',
-                        //       fontSize: 13,
-                        //       fontWeight: FontWeight.w600),
-                        // ),
-                        Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    border: Border.all(color: Colors.white),
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: TextField(
-                                    controller: _emailcontroller,
-                                    decoration: InputDecoration(
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          // const Text(
+                          //   "or use your email account",
+                          //   style: TextStyle(
+                          //       color: Colors.grey,
+                          //       fontFamily: 'OpenSans',
+                          //       fontSize: 13,
+                          //       fontWeight: FontWeight.w600),
+                          // ),
+                          Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 25),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border: Border.all(color: Colors.white),
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 15),
+                                    child: TextField(
+                                      controller: _emailcontroller,
+                                      keyboardType: TextInputType.emailAddress,
+                                      decoration: InputDecoration(
+                                          errorText: _isNotValidate
+                                              ? 'enter proper info'
+                                              : null,
+                                          border: InputBorder.none,
+                                          hintText: 'Email'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 25),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border: Border.all(color: Colors.white),
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 20),
+                                    child: TextField(
+                                      controller: _passwordcontroller,
+                                      keyboardType:
+                                          TextInputType.visiblePassword,
+                                      obscureText: isPasswrodVisible,
+                                      decoration: InputDecoration(
                                         errorText: _isNotValidate
                                             ? 'enter proper info'
                                             : null,
                                         border: InputBorder.none,
-                                        hintText: 'Email'),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    border: Border.all(color: Colors.white),
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 20),
-                                  child: TextField(
-                                    controller: _passwordcontroller,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    obscureText: isPasswrodVisible,
-                                    decoration: InputDecoration(
-                                      errorText: _isNotValidate
-                                          ? 'enter proper info'
-                                          : null,
-                                      border: InputBorder.none,
-                                      hintText: 'Password',
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isPasswrodVisible =
-                                                !isPasswrodVisible;
-                                          });
-                                        },
-                                        icon: FaIcon(
-                                          isPasswrodVisible
-                                              ? FontAwesomeIcons.eye
-                                              : FontAwesomeIcons.eyeSlash,
-                                          size: 20,
+                                        hintText: 'Password',
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              isPasswrodVisible =
+                                                  !isPasswrodVisible;
+                                            });
+                                          },
+                                          icon: FaIcon(
+                                            isPasswrodVisible
+                                                ? FontAwesomeIcons.eye
+                                                : FontAwesomeIcons.eyeSlash,
+                                            size: 20,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 25),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Navigator.push(context,
+                                        //     MaterialPageRoute(builder: (context) {
+                                        //   return const ForgotPasswordPage();
+                                        // }));
+                                      },
+                                      child: const Text(
+                                        "Forgot Password?",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: kPrimaryColor),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+
+                              //signin button
+
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 25),
+                                child: GestureDetector(
+                                  onTap: () => signinMethode(profileProvider),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(20),
+                                    decoration: BoxDecoration(
+                                        color: kPrimaryColor,
+                                        borderRadius:
+                                            BorderRadius.circular(17)),
+                                    child: const Center(
+                                        child: Text(
+                                      "Sign In",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    )),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 26,
+                              ),
+
+                              //not a member? register now
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  const Text(
+                                    "Not a member ?",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
                                   GestureDetector(
                                     onTap: () {
-                                      // Navigator.push(context,
-                                      //     MaterialPageRoute(builder: (context) {
-                                      //   return const ForgotPasswordPage();
-                                      // }));
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const RegisterPage(),
+                                          ));
                                     },
                                     child: const Text(
-                                      "Forgot Password?",
+                                      " Register now",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: kPrimaryColor),
+                                          color: Colors.blue),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-
-                            //signin button
-
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: GestureDetector(
-                                onTap: () {
-                                  signInuser();
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                      color: kPrimaryColor,
-                                      borderRadius: BorderRadius.circular(17)),
-                                  child: const Center(
-                                      child: Text(
-                                    "Sign In",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  )),
-                                ),
+                              const SizedBox(height: 30),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Text(
+                                      "Or continue with",
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    ),
+                                  )
+                                ],
                               ),
-                            ),
-                            const SizedBox(
-                              height: 26,
-                            ),
-
-                            //not a member? register now
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "Not a member ?",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const RegisterPage(),
-                                        ));
-                                  },
-                                  child: const Text(
-                                    " Register now",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Squaretile(
+                                    // onTap: () => provider.signInwithGoogle(),
+                                    imagepath: 'assets/images/google.png',
+                                    onTap: () {},
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 30),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Text(
-                                    "Or continue with",
-                                    style: TextStyle(color: Colors.grey[700]),
+                                  const SizedBox(
+                                    width: 20,
                                   ),
-                                )
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Squaretile(
-                                  // onTap: () => provider.signInwithGoogle(),
-                                  imagepath: 'assets/images/google.png',
-                                  onTap: () {},
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Squaretile(
-                                  // onTap: () => provider.signInwithGoogle(),
-                                  imagepath: 'assets/images/facebook.png',
-                                  onTap: () {},
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
+                                  Squaretile(
+                                    // onTap: () => provider.signInwithGoogle(),
+                                    imagepath: 'assets/images/facebook.png',
+                                    onTap: () {},
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 )
               ],
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }
