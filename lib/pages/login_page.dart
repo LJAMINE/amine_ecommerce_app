@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_1/models/profile.dart';
-import 'package:flutter_ecommerce_1/pages/dashboard.dart';
 import 'package:flutter_ecommerce_1/pages/register_page.dart';
 import 'package:flutter_ecommerce_1/helpers/constants.dart';
 import 'package:flutter_ecommerce_1/providers/profile_provider.dart';
@@ -32,12 +31,12 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    initSharedpref();
+    //initSharedpref();
   }
 
-  void initSharedpref() async {
-    prefs = await SharedPreferences.getInstance();
-  }
+  // void initSharedpref() async {
+  //   prefs = await SharedPreferences.getInstance();
+  // }
 
   signinMethode(
     ProfileProvider profileProvider,
@@ -47,13 +46,13 @@ class _SignInPageState extends State<SignInPage> {
           email: _emailcontroller.text, password: _passwordcontroller.text);
 
       if (profile != null && mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const Dashboard(),
-          ),
-          (route) => false,
-        );
+        // Navigator.pushAndRemoveUntil(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const HomePage(),
+        //   ),
+        //   (route) => false,
+        // );
       } else {
         SmartDialog.showToast("Something is wrong",
             alignment: Alignment.center);
@@ -284,14 +283,14 @@ class _SignInPageState extends State<SignInPage> {
                                     imagepath: 'assets/images/google.png',
                                     onTap: () {},
                                   ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Squaretile(
-                                    // onTap: () => provider.signInwithGoogle(),
-                                    imagepath: 'assets/images/facebook.png',
-                                    onTap: () {},
-                                  ),
+                                  // const SizedBox(
+                                  //   width: 20,
+                                  // ),
+                                  // Squaretile(
+                                  //   // onTap: () => provider.signInwithGoogle(),
+                                  //   imagepath: 'assets/images/facebook.png',
+                                  //   onTap: () {},
+                                  // ),
                                 ],
                               )
                             ],

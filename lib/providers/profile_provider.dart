@@ -8,7 +8,7 @@ import '../helpers/config.dart';
 import '../models/profile.dart';
 
 class ProfileProvider extends ChangeNotifier {
-  Profile profile = Profile();
+  Profile? profile;
 
   Future<bool> registerUser({
     required String email,
@@ -34,6 +34,8 @@ class ProfileProvider extends ChangeNotifier {
       return false;
     }
   }
+
+//sign in
 
   Future<Profile?> signInUser({
     required String email,
@@ -88,11 +90,104 @@ class ProfileProvider extends ChangeNotifier {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       sharedPreferences.clear();
+      profile = null;
+      notifyListeners();
       return true;
     } else {
       return false;
     }
   }
+
+  Future<bool> authWithToken() async {
+    SmartDialog.showLoading();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token");
+    print("========================== $token");
+    if (token == null) {
+      SmartDialog.dismiss();
+      return false;
+    }
+
+    try {
+      var response = await https.get(
+        Uri.parse("${url}users/authwithtoken"),
+        headers: {"Content-Type": "application/json", "token": token},
+      );
+
+      var jsonResponse = jsonDecode(response.body);
+      log(response.body);
+      if (response.statusCode == 200) {
+        var myToken = jsonResponse['token'];
+
+        sharedPreferences.setString('token', myToken);
+        profile = Profile.fromJson(jsonResponse);
+        notifyListeners();
+        SmartDialog.dismiss();
+
+        return true;
+      } else {
+        SmartDialog.dismiss();
+
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Error: $e");
+      SmartDialog.dismiss();
+
+      return false;
+    }
+  }
+
+  // void getUserdata(
+  //   BuildContext context,
+  // ) async {
+  //   try {
+  //     var userProvider = Provider.of<ProfileProvider>(context, listen: false);
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? token = prefs.getString('token');
+
+  //     if (token == null) {
+  //       prefs.setString("token", '');
+  //     }
+
+  //     var tokenRes = await https.post(
+  //       Uri.parse("${url}tokenIsValid"),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "token": token!,
+  //       },
+  //     );
+
+  //     var response = jsonDecode(tokenRes.body);
+
+  //     if (response == true) {
+  //       https.Response userRes = await https.get(
+  //         Uri.parse(url),
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "token": token,
+  //         },
+  //       );
+
+  //       // userProvider.setUser(userRes.body);  abderahimmmmm
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+
+  // Future<Profile> getProfile() async {
+  //   DocumentSnapshot documentSnapshot =
+  //       await firestore.collection("users").doc(auth.currentUser!.uid).get();
+
+  //   print("========================= $documentSnapshot");
+
+  //   profile = Profile.fromJson(documentSnapshot);
+  //   // print(profile);
+  //   notifyListeners();
+
+  //   return profile;
+  // }
 
   // sign up
 

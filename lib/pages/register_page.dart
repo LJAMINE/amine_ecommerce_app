@@ -485,14 +485,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                     imagepath: 'assets/images/google.png',
                                     onTap: () {},
                                   ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Squaretile(
-                                    // onTap: () => provider.signInwithGoogle(),
-                                    imagepath: 'assets/images/facebook.png',
-                                    onTap: () {},
-                                  ),
+                                  // const SizedBox(
+                                  //   width: 20,
+                                  // ),
+                                  // Squaretile(
+                                  //   // onTap: () => provider.signInwithGoogle(),
+                                  //   imagepath: 'assets/images/facebook.png',
+                                  //   onTap: () {},
+                                  // ),
                                 ],
                               ),
                               const SizedBox(
