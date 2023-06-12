@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ecommerce_1/pages/homepage.dart';
-import 'package:flutter_ecommerce_1/pages/login_page.dart';
+import 'package:flutter_ecommerce_1/pages/secondary_pages/homepage.dart';
+import 'package:flutter_ecommerce_1/pages/auth_pages/login_page.dart';
 import 'package:flutter_ecommerce_1/providers/profile_provider.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:provider/provider.dart';
 
 class IndexPage extends StatefulWidget {

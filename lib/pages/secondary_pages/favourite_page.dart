@@ -12,9 +12,14 @@ class _LikesPageState extends State<LikesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.green[400],
-          centerTitle: true,
-          title: const Text("Likes")),
+        backgroundColor: Colors.green[400],
+        centerTitle: true,
+        title: const Text("Favourites"),
+      ),
+      body: SafeArea(
+          child: Container(
+        child: const Text("favvvv"),
+      )),
     );
   }
 }

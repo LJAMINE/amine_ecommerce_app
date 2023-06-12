@@ -33,3 +33,37 @@ Widget textInput(
     ),
   );
 }
+
+Widget textInputregister(
+    {required TextEditingController controller,
+    String? hintText,
+    bool readOnly = false,
+    String? Function(String?)? validator}) {
+  return Container(
+    decoration: BoxDecoration(
+        color: Colors.grey[200],
+        border: Border.all(color: Colors.white),
+        borderRadius: BorderRadius.circular(12)),
+    child: Padding(
+      padding: const EdgeInsets.only(left: 15),
+      child: TextFormField(
+        textInputAction: TextInputAction.next,
+        keyboardType: TextInputType.text,
+        readOnly: readOnly,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        controller: controller,
+        validator: validator,
+        //  (value) {
+        //   if (value!.isEmpty) {
+        //     return ("Please enter The full name");
+        //   }
+        //   return null;
+        // },
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: hintText,
+        ),
+      ),
+    ),
+  );
+}

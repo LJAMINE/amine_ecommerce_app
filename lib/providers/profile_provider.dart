@@ -85,7 +85,7 @@ class ProfileProvider extends ChangeNotifier {
       Uri.parse("${url}users/signout"),
       headers: {"Content-Type": "application/json"},
     );
-    print(response.statusCode);
+    // print(response.statusCode);
     if (response.statusCode == 200) {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
@@ -102,7 +102,7 @@ class ProfileProvider extends ChangeNotifier {
     SmartDialog.showLoading();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token");
-    print("========================== $token");
+    // print("========================== $token");
     if (token == null) {
       SmartDialog.dismiss();
       return false;

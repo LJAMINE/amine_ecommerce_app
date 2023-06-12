@@ -3,18 +3,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_1/helpers/config.dart';
-import 'package:flutter_ecommerce_1/pages/homepage.dart';
-import 'package:flutter_ecommerce_1/pages/login_page.dart';
+import 'package:flutter_ecommerce_1/pages/secondary_pages/homepage.dart';
+import 'package:flutter_ecommerce_1/pages/auth_pages/login_page.dart';
 import 'package:flutter_ecommerce_1/helpers/constants.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 // import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import '../helpers/page_title_bar.dart';
-import '../helpers/upside.dart';
-import '../providers/profile_provider.dart';
-import '../helpers/google.dart';
+import '../../helpers/page_title_bar.dart';
+import '../../helpers/upside.dart';
+import '../../providers/profile_provider.dart';
+import '../../helpers/google.dart';
 import 'package:http/http.dart' as https;
 
 class RegisterPage extends StatefulWidget {
@@ -53,24 +53,24 @@ class _RegisterPageState extends State<RegisterPage> {
         "name": _fullnamecontroller.text
       };
       var jsonBody = jsonEncode(requestBody);
-      print(jsonBody);
+      // print(jsonBody);
 
       var response = await https.post(
         Uri.parse("${url}users/signup"),
         headers: {"Content-Type": "application/json"},
         body: jsonBody,
       );
-      print(response.body);
+      // print(response.body);
 
       var jsonResponse = jsonDecode(response.body);
-      print(jsonResponse['status']);
+      // print(jsonResponse['status']);
 
       if (jsonResponse == true) {
         // ignore: use_build_context_synchronously
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const HomePage()));
       } else {
-        print("SomeThing Went Wrong");
+        // print("SomeThing Went Wrong");
       }
     } else {
       setState(() {

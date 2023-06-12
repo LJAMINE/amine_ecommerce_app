@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_1/models/profile.dart';
-import 'package:flutter_ecommerce_1/pages/register_page.dart';
+import 'package:flutter_ecommerce_1/pages/auth_pages/register_page.dart';
 import 'package:flutter_ecommerce_1/helpers/constants.dart';
 import 'package:flutter_ecommerce_1/providers/profile_provider.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../helpers/page_title_bar.dart';
-import '../helpers/upside.dart';
-import '../helpers/google.dart';
+import '../../helpers/page_title_bar.dart';
+import '../../helpers/upside.dart';
+import '../../helpers/google.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
