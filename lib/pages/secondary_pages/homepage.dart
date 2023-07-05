@@ -20,15 +20,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  @override
-  // void initState() {
-  //   super.initState();
-  //   //function get profile
-
-  //   profile = Provider.of<ProfileProvider>(context, listen: false).getProfile();
-  // }
-
   // Future<Profile>? profile;
 
   @override
@@ -65,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const LikesPage(),
+                            builder: (context) => const FavouritePage(),
                           ));
                     },
                   ),
@@ -85,12 +76,24 @@ class _HomePageState extends State<HomePage> {
                     text: "Profile",
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfilePage(
-                              user: profilprov.profile!.user!,
-                            ),
-                          ));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => profilprov.profile != null
+                              ? ProfilePage(
+                                  user: profilprov.profile!.user!,
+                                )
+                              : const Text(
+                                  "profileprovider.profile is null"), // rah khawi
+                        ),
+                      );
+
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => ProfilePage(
+                      //         user: profilprov.profile!.user!,
+                      //       ),
+                      //     ));
                     },
                   ),
                 ]),
@@ -108,6 +111,15 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(provider.profile!.user!.email!),
+                // FutureBuilder(
+                //   future: profile,
+                //   builder: (context, snap) {
+                //     if (!snap.hasData) {
+                //       return const CircularProgressIndicator();
+                //     }
+                //     return Text(provider.profile!.user!.name!);
+                //   },
+                // ),
               ],
             ),
           );

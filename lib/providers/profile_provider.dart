@@ -10,26 +10,91 @@ import '../models/profile.dart';
 class ProfileProvider extends ChangeNotifier {
   Profile? profile;
 
+  Future<bool> updateProfile(
+    User newProfile, {
+    required String fullname,
+    required String id,
+    required String phoneNumber,
+  }) async {
+    try {
+      SmartDialog.showLoading();
+
+      var requestBody = {
+        "phoneNumber": phoneNumber,
+        "name": fullname,
+      };
+
+      var jsonBody = jsonEncode(requestBody);
+
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token");
+
+      var response = await https.put(
+        // Uri.parse("${url}profile"),
+        Uri.parse("${url}profile/$id"),
+        headers: {
+          "Content-Type": "application/json",
+          // "token": token!,
+          "Authorization": "Bearer $token",
+        },
+
+        body: jsonBody,
+      );
+      print(token);
+      SmartDialog.dismiss();
+
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        profile = Profile.fromJson(jsonResponse);
+        notifyListeners();
+
+        return true;
+      } else {
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      SmartDialog.dismiss();
+      log(e.toString());
+      return false;
+    }
+  }
+
   Future<bool> registerUser({
     required String email,
     required String password,
-    required String confirmePassword,
     required String phoneNumber,
     required String fullname,
   }) async {
-    //create user
     try {
       SmartDialog.showLoading();
-      await
-          // condition abderrahim
 
-          SmartDialog.dismiss();
+      var requestBody = {
+        "email": email,
+        "password": password,
+        "phoneNumber": phoneNumber,
+        "name": fullname,
+      };
 
-      return true;
-    } catch (e) {
-      // print(e);
+      var jsonBody = jsonEncode(requestBody);
+
+      var response = await https.post(
+        Uri.parse("${url}signup"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonBody,
+      );
+
       SmartDialog.dismiss();
 
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print("error in register");
+        return false;
+      }
+    } catch (e) {
+      SmartDialog.dismiss();
       log(e.toString());
       return false;
     }
@@ -50,7 +115,7 @@ class ProfileProvider extends ChangeNotifier {
 
     try {
       var response = await https.post(
-        Uri.parse("${url}users/signin"),
+        Uri.parse("${url}signin"),
         headers: {"Content-Type": "application/json"},
         body: jsonBody,
       );
@@ -61,19 +126,13 @@ class ProfileProvider extends ChangeNotifier {
         var myToken = jsonResponse['token'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', myToken);
+
         profile = Profile.fromJson(jsonResponse);
         notifyListeners();
         return profile;
       } else {
         return null;
       }
-      // } else if (response.statusCode == 400) {
-      //   print("User not found. Please sign up.");
-      // } else if (response.statusCode == 401) {
-      //   print("Email and password do not match.");
-      // } else {
-      //   print("Internal server error.");
-      // }
     } catch (e) {
       debugPrint("Error: $e");
       return null;
@@ -82,7 +141,7 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<bool> logout() async {
     var response = await https.get(
-      Uri.parse("${url}users/signout"),
+      Uri.parse("${url}signout"),
       headers: {"Content-Type": "application/json"},
     );
     // print(response.statusCode);
@@ -110,7 +169,7 @@ class ProfileProvider extends ChangeNotifier {
 
     try {
       var response = await https.get(
-        Uri.parse("${url}users/authwithtoken"),
+        Uri.parse("${url}authwithtoken"),
         headers: {"Content-Type": "application/json", "token": token},
       );
 
@@ -137,93 +196,37 @@ class ProfileProvider extends ChangeNotifier {
       return false;
     }
   }
-
-  // void getUserdata(
-  //   BuildContext context,
-  // ) async {
-  //   try {
-  //     var userProvider = Provider.of<ProfileProvider>(context, listen: false);
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? token = prefs.getString('token');
-
-  //     if (token == null) {
-  //       prefs.setString("token", '');
-  //     }
-
-  //     var tokenRes = await https.post(
-  //       Uri.parse("${url}tokenIsValid"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "token": token!,
-  //       },
-  //     );
-
-  //     var response = jsonDecode(tokenRes.body);
-
-  //     if (response == true) {
-  //       https.Response userRes = await https.get(
-  //         Uri.parse(url),
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "token": token,
-  //         },
-  //       );
-
-  //       // userProvider.setUser(userRes.body);  abderahimmmmm
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-  // Future<Profile> getProfile() async {
-  //   DocumentSnapshot documentSnapshot =
-  //       await firestore.collection("users").doc(auth.currentUser!.uid).get();
-
-  //   print("========================= $documentSnapshot");
-
-  //   profile = Profile.fromJson(documentSnapshot);
-  //   // print(profile);
-  //   notifyListeners();
-
-  //   return profile;
-  // }
-
-  // sign up
-
-  //    void registerUser() async {
-  //   if (_emailcontroller.text.isNotEmpty &&
-  //       _passwordcontroller.text.isNotEmpty &&
-  //       _fullnamecontroller.text.isNotEmpty) {
-  //     var requestBody = {
-  //       "email": _emailcontroller.text,
-  //       "password": _passwordcontroller.text,
-  //       "name": _fullnamecontroller.text
-  //     };
-  //     var jsonBody = jsonEncode(requestBody);
-  //     print(jsonBody);
-
-  //     var response = await https.post(
-  //       Uri.parse("${url}users/signup"),
-  //       headers: {"Content-Type": "application/json"},
-  //       body: jsonBody,
-  //     );
-  //     print(response.body);
-
-  //     var jsonResponse = jsonDecode(response.body);
-  //     print(jsonResponse['status']);
-
-  //     if (jsonResponse = true) {
-  //       // ignore: use_build_context_synchronously
-  //       Navigator.push(
-  //           context, MaterialPageRoute(builder: (context) => const HomePage()));
-  //     } else {
-  //       print("SomeThing Went Wrong");
-  //     }
-  //   } else {
-  //     setState(() {
-  //       _isNotValidate = true;
-  //     });
-  //   }
-  // }
 }
+
+ 
+
+
+//  Future<bool> editProfile(Profile profile) async {
+//     try {
+//       SmartDialog.showLoading();
+//       String? photoURL;
+//       if (imageFile != null) {
+//         Reference reference;
+//         reference = FirebaseStorage.instance.ref("images/${imageFile!.name}");
+//         await reference.putFile(File(imageFile!.path));
+
+//         photoURL = await reference.getDownloadURL();
+//         imageFile = null;
+//       }
+
+//       await FirebaseFirestore.instance
+//           .collection("users")
+//           .doc(profile.id)
+//           .update({
+//         "firstName": profile.firstName,
+//         "lastName": profile.lastName,
+//         "image": photoURL ?? profile.image,
+//       });
+//       return true;
+//     } catch (e) {
+//       SmartDialog.dismiss();
+//       return false;
+//     } finally {
+//       SmartDialog.dismiss();
+//     }
+//   }

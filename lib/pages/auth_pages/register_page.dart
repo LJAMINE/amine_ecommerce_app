@@ -1,10 +1,6 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_ecommerce_1/helpers/config.dart';
-import 'package:flutter_ecommerce_1/pages/secondary_pages/homepage.dart';
-import 'package:flutter_ecommerce_1/pages/auth_pages/login_page.dart';
 import 'package:flutter_ecommerce_1/helpers/constants.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,7 +11,6 @@ import '../../helpers/page_title_bar.dart';
 import '../../helpers/upside.dart';
 import '../../providers/profile_provider.dart';
 import '../../helpers/google.dart';
-import 'package:http/http.dart' as https;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -43,39 +38,91 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  void registerUser() async {
-    if (_emailcontroller.text.isNotEmpty &&
-        _passwordcontroller.text.isNotEmpty &&
-        _fullnamecontroller.text.isNotEmpty) {
-      var requestBody = {
-        "email": _emailcontroller.text,
-        "password": _passwordcontroller.text,
-        "name": _fullnamecontroller.text
-      };
-      var jsonBody = jsonEncode(requestBody);
-      // print(jsonBody);
+//   void registerUser() async {
+//     if (_emailcontroller.text.isNotEmpty &&
+//         _passwordcontroller.text.isNotEmpty &&
+//         _fullnamecontroller.text.isNotEmpty) {
+//       var requestBody = {
+//         "email": _emailcontroller.text,
+//         "password": _passwordcontroller.text,
+//         "name": _fullnamecontroller.text
+//       };
+//       var jsonBody = jsonEncode(requestBody);
+//       // print(jsonBody);
 
-      var response = await https.post(
-        Uri.parse("${url}users/signup"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonBody,
-      );
-      // print(response.body);
+//       var response = await https.post(
+//         Uri.parse("${url}users/signup"),
+//         headers: {"Content-Type": "application/json"},
+//         body: jsonBody,
+//       );
+//       // print(response.body);
 
-      var jsonResponse = jsonDecode(response.body);
-      // print(jsonResponse['status']);
+//       var jsonResponse = jsonDecode(response.body);
+//       print(jsonResponse['status']);
+// // (jsonResponse == true)
+//       if (jsonResponse['success'] == true) {
+//         // ignore: use_build_context_synchronously
+//         Navigator.push(
+//             context, MaterialPageRoute(builder: (context) => const HomePage()));
+//       } else {
+//         // print("SomeThing Went Wrong");
+//       }
+//     } else {
+//       setState(() {
+//         isNotValidate = true;
+//       });
+//     }
+//   }
 
-      if (jsonResponse == true) {
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const HomePage()));
+  // void signUp() async {
+  //   if (_emailcontroller.text.isNotEmpty &&
+  //       _passwordcontroller.text.isNotEmpty &&
+  //       _fullnamecontroller.text.isNotEmpty) {
+  //     var requestBody = {
+  //       "email": _emailcontroller.text,
+  //       "password": _passwordcontroller.text,
+  //       "name": _fullnamecontroller.text
+  //     };
+  //     var jsonBody = jsonEncode(requestBody);
+
+  //     var response = await https.post(
+  //       Uri.parse("${url}signup"),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonBody,
+  //     );
+
+  //     var jsonResponse = jsonDecode(response.body);
+  //     print(jsonResponse['status']);
+
+  //     if (jsonResponse['success'] == true) {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => const HomePage()),
+  //       );
+  //     } else {
+  //       print("Something went wrong");
+  //     }
+  //   } else {
+  //     setState(() {
+  //       isNotValidate = true;
+  //     });
+  //   }
+  // }
+  register(
+    ProfileProvider profileProvider,
+  ) async {
+    if (formKey.currentState!.validate()) {
+      bool isSignup = await profileProvider.registerUser(
+          email: _emailcontroller.text,
+          password: _passwordcontroller.text,
+          phoneNumber: _phonecontroller.text,
+          fullname: _fullnamecontroller.text);
+
+      if (isSignup && mounted) {
+        Navigator.pop(context);
       } else {
-        // print("SomeThing Went Wrong");
+        SmartDialog.showToast("Something went wrong");
       }
-    } else {
-      setState(() {
-        isNotValidate = true;
-      });
     }
   }
 
@@ -387,30 +434,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 25),
                                 child: GestureDetector(
-                                  onTap: () async {
-                                    if (formKey.currentState!.validate()) {
-                                      bool isregistred =
-                                          await profileProvider.registerUser(
-                                        email: _emailcontroller.text,
-                                        password: _passwordcontroller.text,
-                                        confirmePassword:
-                                            _confirmpasswordcontroller.text,
-                                        phoneNumber: _phonecontroller.text,
-                                        fullname: _fullnamecontroller.text,
-                                      );
-
-                                      if (isregistred) {
-                                        if (!mounted) return;
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const HomePage(),
-                                            ));
-                                      } else {
-                                        SmartDialog.showToast("signup failed");
-                                      }
-                                    }
+                                  onTap: () {
+                                    register(profileProvider);
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(20),
@@ -444,12 +469,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SignInPage(),
-                                          ));
+                                      Navigator.pop(context);
+                                      // Navigator.pushReplacement(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           const SignInPage(),
+                                      //     ));
                                     },
                                     child: const Text(
                                       " Login now",

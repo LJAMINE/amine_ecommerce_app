@@ -44,6 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
               key: formKey,
               child: ListView(
                 children: [
+                  const SizedBox(
+                    height: 150,
+                  ),
                   textInputregister(
                     controller: _fullnamecontroller,
                     hintText: "fullname",
@@ -55,11 +58,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 15,
                   ),
                   textInputregister(
                     controller: _emailcontroller,
                     readOnly: true,
+                  ),
+                  const SizedBox(
+                    height: 15,
                   ),
                   textInputregister(
                     controller: _phonecontroller,
@@ -70,6 +76,75 @@ class _ProfilePageState extends State<ProfilePage> {
                       }
                       return null;
                     },
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20))),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                              fontSize: 15,
+                              letterSpacing: 2,
+                              color: Colors.black),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            User newProfile = User()
+                              ..name = _fullnamecontroller.text
+                              ..phoneNumber = _phonecontroller.text;
+
+                            var x = await profile.updateProfile(
+                              newProfile,
+                              fullname: _fullnamecontroller.text,
+                              phoneNumber: _phonecontroller.text,
+                              id: widget.user.sId!,
+                            );
+                            if (!mounted) {
+                              return;
+                            }
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  x
+                                      ? "Edit contact Success"
+                                      : "failed to Edit contact",
+                                ),
+                              ),
+                            );
+                            // if (x) {
+                            //   // for show update right now
+                            //   await profile.getProfile();
+                            //   if (mounted) {
+                            //     Navigator.pop(context);
+                            //   }
+                            // }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20))),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                            fontSize: 15,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      )
+                    ],
                   )
                 ],
               ),

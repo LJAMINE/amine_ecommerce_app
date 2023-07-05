@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../helpers/page_title_bar.dart';
 import '../../helpers/upside.dart';
 import '../../helpers/google.dart';
+import 'forgot_password_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -184,10 +185,11 @@ class _SignInPageState extends State<SignInPage> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        // Navigator.push(context,
-                                        //     MaterialPageRoute(builder: (context) {
-                                        //   return const ForgotPasswordPage();
-                                        // }));
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return const ForgotPasswordPage();
+                                        }));
                                       },
                                       child: const Text(
                                         "Forgot Password?",
@@ -242,7 +244,7 @@ class _SignInPageState extends State<SignInPage> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
@@ -283,14 +285,6 @@ class _SignInPageState extends State<SignInPage> {
                                     imagepath: 'assets/images/google.png',
                                     onTap: () {},
                                   ),
-                                  // const SizedBox(
-                                  //   width: 20,
-                                  // ),
-                                  // Squaretile(
-                                  //   // onTap: () => provider.signInwithGoogle(),
-                                  //   imagepath: 'assets/images/facebook.png',
-                                  //   onTap: () {},
-                                  // ),
                                 ],
                               )
                             ],
@@ -308,20 +302,3 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
-
-// iconButton(BuildContext context) {
-//   return const Row(
-//     mainAxisAlignment: MainAxisAlignment.center,
-//     children: [
-//       RoundedIcon(imageUrl: "assets/images/facebook.png"),
-//       SizedBox(
-//         width: 20,
-//       ),
-//       RoundedIcon(imageUrl: "assets/images/twitter.png"),
-//       SizedBox(
-//         width: 20,
-//       ),
-//       RoundedIcon(imageUrl: "assets/images/google.png"),
-//     ],
-//   );
-// }
