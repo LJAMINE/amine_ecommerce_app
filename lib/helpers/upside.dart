@@ -22,22 +22,30 @@ class Upside extends StatelessWidget {
           ),
         ),
       ),
-      Positioned(
-        left: 0,
-        top: 175,
-        child: Image.network(
-          "https://ouch-cdn2.icons8.com/gEMjZ4ZC639WYTYjpan-J3XByArwXzS7lUcNL-UMVdk/rs:fit:196:289/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvMi80/NzU5OTI4ZS04OWE3/LTRhOTYtYjdjMi0w/ZDA0MWI2Y2E3MTQu/c3Zn.png",
-          scale: 3,
-        ),
-      ),
-      Positioned(
-        right: 0,
-        top: 60,
-        child: Image.network(
-          "https://ouch-cdn2.icons8.com/vKz7XNZvZiNKlkUWT2HjP8oNZ8hZ0UblhuF8J6sGRGI/rs:fit:196:112/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjg3/LzA3ZDZiZjRmLWFj/OTYtNGRmMy05ZGYz/LTNhNWQzOWI5NGYz/MC5zdmc.png",
-          scale: 3,
-        ),
-      )
+      // Positioned(
+      //   left: 0,
+      //   top: 175,
+      //   child: Image.network(
+      //     "https://ouch-cdn2.icons8.com/gEMjZ4ZC639WYTYjpan-J3XByArwXzS7lUcNL-UMVdk/rs:fit:196:289/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvMi80/NzU5OTI4ZS04OWE3/LTRhOTYtYjdjMi0w/ZDA0MWI2Y2E3MTQu/c3Zn.png",
+      //     scale: 3,
+      //     errorBuilder: (context, error, stackTrace) {
+      //       // Handle the error gracefully, show a fallback image, or display an error message
+      //       return Image.asset('assets/images/flower.png', scale: 3);
+      //     },
+      //   ),
+      // ),
+      // Positioned(
+      //   right: 0,
+      //   top: 60,
+      //   child: Image.network(
+      //     "https://ouch-cdn2.icons8.com/vKz7XNZvZiNKlkUWT2HjP8oNZ8hZ0UblhuF8J6sGRGI/rs:fit:196:112/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjg3/LzA3ZDZiZjRmLWFj/OTYtNGRmMy05ZGYz/LTNhNWQzOWI5NGYz/MC5zdmc.png",
+      //     scale: 3,
+      //     errorBuilder: (context, error, stackTrace) {
+      //       // Handle the error gracefully, show a fallback image, or display an error message
+      //       return Image.asset('assets/images/flower.png', scale: 3);
+      //     },
+      //   ),
+      // )
     ]);
   }
 }

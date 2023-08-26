@@ -1,50 +1,62 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_1/helpers/constants.dart';
-
 import 'change_password.dart';
+import 'package:http/http.dart' as http;
 
-class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({super.key});
+class EmailVerification extends StatefulWidget {
+  final String email;
+  const EmailVerification({
+    super.key,
+    required this.email,
+  });
 
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  State<EmailVerification> createState() => _EmailVerificationState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  // final _emailcontroller = TextEditingController();
-  @override
-  void dispose() {
-    // _emailcontroller.dispose();
-    super.dispose();
+class _EmailVerificationState extends State<EmailVerification> {
+  final TextEditingController _otpController = TextEditingController();
+
+  Future<void> verifyOTP() async {
+    final otp = _otpController.text.trim();
+    if (otp.isEmpty) {
+      // Handle empty OTP field error
+      return;
+    }
+
+    const url = 'http://10.0.2.2:8000/api/verifyotp';
+    var data = json.encode(
+      {
+        'otp': otp,
+        'email': widget.email,
+      },
+    );
+    debugPrint(data);
+    final response = await http.post(Uri.parse(url),
+        body: data, headers: {"Content-Type": "application/json"});
+    if (mounted && response.statusCode == 200) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return ChangePassword(
+            otp: otp,
+            email: widget.email,
+          );
+        }),
+      );
+    } else {
+      // OTP verification failed, handle the error
+      print('OTP verification failed');
+    }
   }
 
-  // Future passwordReset() async {
-  //   try {
-  //     await FirebaseAuth.instance
-  //         .sendPasswordResetEmail(email: _emailcontroller.text.trim());
-
-  //     // ignore: use_build_context_synchronously
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return const AlertDialog(
-  //           content: Text("Password reset link sent! Check your Email"),
-  //         );
-  //       },
-  //     );
-  //   } on FirebaseAuthException catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //     // dialogue of error
-  //     showDialog(
-  //         context: context,
-  //         builder: (context) {
-  //           return AlertDialog(
-  //             content: Text(e.message.toString()),
-  //           );
-  //         });
-  //   }
-  // }
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +98,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 color: Colors.grey[200],
                 border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.circular(12)),
-            child: const Padding(
-              padding: EdgeInsets.only(left: 15),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15),
               child: TextField(
-                // controller: _emailcontroller,
-                decoration: InputDecoration(
+                controller: _otpController,
+                decoration: const InputDecoration(
                     border: InputBorder.none, hintText: 'OTP Code'),
               ),
             ),
@@ -102,11 +114,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const ChangePassword();
-              }));
-            },
+            onTap: verifyOTP,
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -134,17 +142,29 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             GestureDetector(
-              onTap: () {
-                // Navigator.pushReplacement(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => const RegisterPage(),
-                //     ));
-              },
-              child: const Text(
-                " resend OTP ",
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+              onTap: () {},
+
+              //  () {
+              //   Navigator.pushReplacement(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => const ChangePassword(),
+              //       ));
+              // },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      // Implement resend OTP functionality here
+                    },
+                    child: const Text(
+                      " resend OTP ",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.blue),
+                    ),
+                  )
+                ],
               ),
             ),
           ],

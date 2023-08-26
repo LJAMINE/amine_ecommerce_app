@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../helpers/page_title_bar.dart';
 import '../../helpers/upside.dart';
 import '../../helpers/google.dart';
-import 'forgot_password_page.dart';
+import 'forgot_password/enter_email.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -94,18 +94,9 @@ class _SignInPageState extends State<SignInPage> {
                           const SizedBox(
                             height: 15,
                           ),
-
                           const SizedBox(
                             height: 15,
                           ),
-                          // const Text(
-                          //   "or use your email account",
-                          //   style: TextStyle(
-                          //       color: Colors.grey,
-                          //       fontFamily: 'OpenSans',
-                          //       fontSize: 13,
-                          //       fontWeight: FontWeight.w600),
-                          // ),
                           Column(
                             children: [
                               Padding(
@@ -188,14 +179,14 @@ class _SignInPageState extends State<SignInPage> {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                          return const ForgotPasswordPage();
+                                          return const EnterEmailpage();
                                         }));
                                       },
                                       child: const Text(
                                         "Forgot Password?",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: kPrimaryColor),
+                                            color: Colors.blue),
                                       ),
                                     ),
                                   ],
