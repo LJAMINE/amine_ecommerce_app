@@ -10,12 +10,8 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green[400],
-        centerTitle: true,
-        title: const Text("Cart"),
-      ),
+    return const Center(
+      child: Text('cart'),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/secondary_pages/about_page.dart';
+import '../pages/secondary_pages/homepage.dart';
 import '../pages/secondary_pages/profile_page.dart';
 import '../providers/profile_provider.dart';
 
@@ -68,6 +69,39 @@ class _DrawarWidgetState extends State<DrawarWidget> {
                       ),
                       leading: const FaIcon(
                         Icons.person,
+                        color: Colors.black,
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          )),
+                      title: const Text(
+                        "HomePage",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      leading: const FaIcon(
+                        Icons.home,
+                        color: Colors.black,
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(
+                            user: provider.profile!.user!,
+                          ),
+                        ),
+                      ),
+                      title: const Text(
+                        "my commandes",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      leading: const FaIcon(
+                        Icons.card_giftcard,
                         color: Colors.black,
                       ),
                     ),

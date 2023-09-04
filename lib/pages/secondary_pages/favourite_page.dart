@@ -10,16 +10,8 @@ class FavouritePage extends StatefulWidget {
 class _FavouritePageState extends State<FavouritePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green[400],
-        centerTitle: true,
-        title: const Text("Favourites"),
-      ),
-      body: SafeArea(
-          child: Container(
-        child: const Text("favvvv"),
-      )),
+    return const Center(
+      child: Text('favorite'),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ecommerce_1/pages/secondary_pages/homepage.dart';
 import 'package:flutter_ecommerce_1/pages/auth_pages/login_page.dart';
 import 'package:flutter_ecommerce_1/providers/profile_provider.dart';
+import 'package:flutter_ecommerce_1/start.dart';
 import 'package:provider/provider.dart';
 
 class IndexPage extends StatefulWidget {
@@ -28,7 +28,9 @@ class _IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
       builder: (context, provider, child) {
-        return provider.profile != null ? const HomePage() : const SignInPage();
+        return provider.profile != null
+            ? const StartPage()
+            : const SignInPage();
       },
     );
   }
